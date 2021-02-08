@@ -10,3 +10,9 @@
 #include <string.h>
 //引入 opengles 的库
 #include <GLES2/gl2.h>
+//android 打印日志的库
+#include <android/log.h>
+
+
+//定义日志的tag
+#define LOG_TAG "mayh.so_log"
