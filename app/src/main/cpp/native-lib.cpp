@@ -1,5 +1,5 @@
-#include <jni.h>
-#include <string>
+//引入全局文件库
+#include "MayhPrefix.h"
 
 extern "C" JNIEXPORT jstring JNICALL
 Java_com_myh_learnogles_MainActivity_stringFromJNI(
