@@ -24,6 +24,7 @@ add_library( # Sets the name of the library.
              native-lib.cpp
              #此处添加参与编译的c或者c++文件
              Sence.cpp
+             GlView.cpp
         )
 
 # Searches for a specified prebuilt library and stores the path as a
@@ -48,4 +49,4 @@ target_link_libraries( # Specifies the target library.
 
                        # Links the target library to the log library
                        # included in the NDK.
-                       ${log-lib} )
+                       ${log-lib} android GLESv2)  #重点  此处连接Android需要的库  Gles2.0的库

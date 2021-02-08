@@ -8,3 +8,5 @@
 #include <stdio.h>
 #include <jni.h>
 #include <string.h>
+//引入 opengles 的库
+#include <GLES2/gl2.h>
