@@ -17,6 +17,11 @@
 #include <android/asset_manager.h>
 #include <android/asset_manager_jni.h>
 
+//引入c的时间
+#include <time.h>
+//c++string
+#include <string>
+
 
 //定义日志的tag
 #define LOG_TAG "mayh.so_log"

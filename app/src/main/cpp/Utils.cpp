@@ -27,3 +27,23 @@ unsigned  char * loadFileContent(AAssetManager *aAssetManager,const  char *path,
     }
     return fileContent;
 }
+
+/**
+ * 用于计算每一帧耗费的时间
+ * @return  秒
+ */
+float GetFrameTime(){
+    //在c++中静态变量的初始化只会初始化一次
+    static unsigned long long lastTime=0,currentTime=0;
+    timeval current;
+    //获取当前时间
+    gettimeofday(&current, nullptr);
+    //tv_sec ：秒    tv_usec：v 秒  ，单位统一成秒
+    currentTime=current.tv_sec*1000+current.tv_usec/1000;
+    __android_log_print(ANDROID_LOG_ERROR,LOG_TAG,"11","%d&%d",current.tv_sec,current.tv_usec);
+    unsigned long long frameTime=lastTime==0?0:currentTime-lastTime;
+    lastTime=currentTime;
+    //返回秒
+    __android_log_print(ANDROID_LOG_ERROR,LOG_TAG,"GetFrameTime","%d&%d",lastTime,currentTime);
+    return float (frameTime)/1000.0f;
+}

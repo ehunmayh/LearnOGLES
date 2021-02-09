@@ -6,3 +6,5 @@
 
 //定义加载文件的方法
 unsigned char * loadFileContent(AAssetManager  *aAssetManager,const  char *path,int &fileSize);
+
+float GetFrameTime();

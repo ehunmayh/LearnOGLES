@@ -73,8 +73,8 @@ Java_com_myh_learnogles_glview_MayhGLSurfaceViewRenderer_Render(JNIEnv
 jobject thiz
 ) {
 
-    //打印日志
-    __android_log_print(ANDROID_LOG_ERROR,LOG_TAG,"Render");
+    //打印日志  计算每一次调用render和上一次间隔的时间
+    __android_log_print(ANDROID_LOG_ERROR,LOG_TAG,"Render %f",GetFrameTime());
     //擦出某些东西，  擦出（颜色缓存区）GL_COLOR_BUFFER_BIT
     //GL_DEPTH_BUFFER_BIT 深度缓冲区
     //GL_STENCIL_BUFFER_BIT 模板缓冲
