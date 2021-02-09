@@ -5,4 +5,4 @@
 #include "MayhPrefix.h"
 
 //定义加载文件的方法
-unsigned char * loadFileContent(const  char *path,int &fileSize);
+unsigned char * loadFileContent(AAssetManager  *aAssetManager,const  char *path,int &fileSize);

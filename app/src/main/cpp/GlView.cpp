@@ -7,25 +7,25 @@
 //定义 AAssetManager
 static AAssetManager * aAssetManager= nullptr;
 
-unsigned char * loadFileContent(const  char *path,int &fileSize){
-    unsigned char *fileContent= nullptr;
-    fileSize=0;
-    //根据文件路径获取文件的Assets队形
-    AAsset *aAsset=AAssetManager_open(aAssetManager,path,AASSET_MODE_UNKNOWN);
-    if (aAsset!= nullptr){
-        //有文件获取文件内容的长度
-        fileSize=AAsset_getLength(aAsset);
-        //开辟空间, 空间大小为内容的长度+1，个人习惯用于存放\n
-        fileContent=new unsigned char [fileSize+1];
-        //将aAsset中的内容读取到fileContent中 ,读取的长度fileSize
-        AAsset_read(aAsset,fileContent,fileSize);
-        //最后一位写0
-        fileContent[fileSize]=0;
-        //记得释放资源
-        AAsset_close(aAsset);
-    }
-    return fileContent;
-}
+//unsigned char * loadFileContent(const  char *path,int &fileSize){
+//    unsigned char *fileContent= nullptr;
+//    fileSize=0;
+//    //根据文件路径获取文件的Assets队形
+//    AAsset *aAsset=AAssetManager_open(aAssetManager,path,AASSET_MODE_UNKNOWN);
+//    if (aAsset!= nullptr){
+//        //有文件获取文件内容的长度
+//        fileSize=AAsset_getLength(aAsset);
+//        //开辟空间, 空间大小为内容的长度+1，个人习惯用于存放\n
+//        fileContent=new unsigned char [fileSize+1];
+//        //将aAsset中的内容读取到fileContent中 ,读取的长度fileSize
+//        AAsset_read(aAsset,fileContent,fileSize);
+//        //最后一位写0
+//        fileContent[fileSize]=0;
+//        //记得释放资源
+//        AAsset_close(aAsset);
+//    }
+//    return fileContent;
+//}
 
 extern "C"
 JNIEXPORT void JNICALL
@@ -43,7 +43,7 @@ jobject am // 传入AssetsManager 操作管理 assets目录
 
    int fileSize=0;
    //读取Assets下的内容
-   unsigned char *text=loadFileContent("test.txt",fileSize);
+   unsigned char *text=loadFileContent(aAssetManager,"test.txt",fileSize);
    if (text!= nullptr){
        __android_log_print(ANDROID_LOG_ERROR,LOG_TAG,"%s",(char *)text);
        //删除销毁
