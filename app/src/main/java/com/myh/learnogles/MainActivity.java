@@ -61,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 //        setContentView(R.layout.activity_main);
-        mRenderer=new MayhGLSurfaceViewRenderer();
+        mRenderer=new MayhGLSurfaceViewRenderer(this);
         mGLSurfaceView=new MayhGlSurfaceView(getApplicationContext(),mRenderer);
         //设置窗口
         setContentView(mGLSurfaceView);

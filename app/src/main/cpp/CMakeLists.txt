@@ -7,6 +7,9 @@ cmake_minimum_required(VERSION 3.10.2)
 
 # Declares and names the project.
 
+#设置c++的编译版本 11， 11后推出的nullptr，解决了之前版本NULL=0时的二义性问题
+set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -std=c++11 -Ofast -Wno-unused-result  -Wfatal-errors -fPIC -fno-rtti -fno-exceptions")
+
 project("learnogles")
 
 # Creates and names a library, sets it as either STATIC
@@ -25,6 +28,7 @@ add_library( # Sets the name of the library.
              #此处添加参与编译的c或者c++文件
              Sence.cpp
              GlView.cpp
+             Utils.cpp
         )
 
 # Searches for a specified prebuilt library and stores the path as a

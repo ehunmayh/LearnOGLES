@@ -1,5 +1,7 @@
 package com.myh.learnogles.glview;
 
+import android.content.Context;
+import android.content.res.AssetManager;
 import android.opengl.GLSurfaceView;
 
 import javax.microedition.khronos.egl.EGLConfig;
@@ -21,15 +23,21 @@ public class MayhGLSurfaceViewRenderer implements GLSurfaceView.Renderer {
     static {
         System.loadLibrary("mayh");
     }
-    public native void initGlView();
+
+    private final Context mContext;
+
+    public native void initGlView(AssetManager manager);
     public native void onSurfaceChange(int width,int height);
     public native void Render();
+    public MayhGLSurfaceViewRenderer(Context context){
+        mContext = context;
+    }
     @Override
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
         //设置颜色：在gl的渲染环境中设置ClearColor状态  java层
 //        gl.glClearColor(0.1f,0.4f,0.6f,1.0f);
         //c++层
-        initGlView();
+        initGlView(mContext.getAssets());
     }
 
     @Override

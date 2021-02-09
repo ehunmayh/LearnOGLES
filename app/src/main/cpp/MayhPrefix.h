@@ -13,6 +13,10 @@
 //android 打印日志的库
 #include <android/log.h>
 
+//引入Android AssetManager库，操作Android Assets目录下的资源
+#include <android/asset_manager.h>
+#include <android/asset_manager_jni.h>
+
 
 //定义日志的tag
 #define LOG_TAG "mayh.so_log"
