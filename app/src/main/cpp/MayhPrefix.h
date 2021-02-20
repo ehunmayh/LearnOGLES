@@ -23,6 +23,8 @@
 #include <string>
 
 //引入OpenGl的数学库，因为opengl是一个3D编程，肯定会碰到相应:学问题，没必要自己实现这些，直接引入这个库即可
+#include "Glm/ext.hpp"
+#include "Glm/ext.hpp"
 
 //定义日志的tag
 #define LOG_TAG "mayh.so_log"
