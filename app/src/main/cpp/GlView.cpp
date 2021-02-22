@@ -70,6 +70,27 @@ jobject am // 传入AssetsManager 操作管理 assets目录
     vertice[0].mPosition[2]=-2.0f;//z
     vertice[0].mPosition[3]=1.0f;//w
 
+    // vertex buffer object ，用于存顶点数据缓冲区对象，顶点数据放置到Gluint上，通过Gluint vbo将顶点数据放置到显卡上去
+    GLuint vbo;
+    //让显卡将vbo初始化，让显卡在显卡上创建一个对象，将对象的标识写如vbo中，通过vbo中的标识操作显卡  1：告诉显卡需要1个vbo   也可以申请多个vboglGenBuffers(2,vbos)
+    glGenBuffers(1,&vbo);
+    //设置数据  将vbo设置到GL_ARRAY_BUFFER卡槽上去
+    glBindBuffer(GL_ARRAY_BUFFER,vbo);
+    /**
+     * 将数据从cpu传入到gpu上   sizeof(Vertice)*3 三个点数据的大小    将vertice中的数据设置到GL_ARRAY_BUFFER（卡槽或状态上）中 GL_STATIC_DRAW用于绘制
+     * 向GL_ARRAY_BUFFER（卡槽，状态上）设置sizeof(Vertice)*3 三个点数据的大小的数据，数据是vertice中的数据，GL_STATIC_DRAW用于绘制
+     * 从表面上看设置数据时和vbo没用关系，但是卡槽或状态机GL_ARRAY_BUFFER指向的vbo,所以当我们对GL_ARRAY_BUFFER进行操作时，实际上操作的是当前卡槽状态实际指向的vbo
+     *
+     * 如果只是想在gpu分配空间，而不传输数据 ，
+     * glBufferData(GL_ARRAY_BUFFER,sizeof(Vertice)*3, nullptr,GL_STATIC_DRAW);//只是在gpu分配内存而不传输数据
+     * 后期在动态设置数据
+     * glBufferSubData(GL_ARRAY_BUFFER,0,sizeof(Vertice)*3,vertice);//让后在动态的设置数据cpu--》gpu
+     */
+    glBufferData(GL_ARRAY_BUFFER,sizeof(Vertice)*3,vertice,GL_STATIC_DRAW);
+
+    //将卡槽GL_ARRAY_BUFFER重新指向0号vbo, 0号是一个缺省值默认值， 为什么这么设置指向0号呢，为了防止后面失误操作了vbo产生数据污染， 因为这个已经将vbo重新指向了0号vbo,
+    // 即后面我失误调用了glBufferData(GL_ARRAY_BUFFER,sizeof(Vertice)*3,vertice,GL_STATIC_DRAW)，也不会对之前的产生影响
+    glBindBuffer(GL_ARRAY_BUFFER,0);
 }
 
 
