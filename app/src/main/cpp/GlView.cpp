@@ -49,6 +49,27 @@ jobject am // 传入AssetsManager 操作管理 assets目录
        //删除销毁
        delete [] text;
    }
+
+   //定义三角形的三个顶点，这些顶点数据是在CPU内存上， 目标是把这些呈现到--》GPU上
+   Vertice vertice[3];
+   //顶点1
+   vertice[0].mPosition[0]=-0.5f;//x
+   vertice[0].mPosition[1]=-0.5f;//y
+   vertice[0].mPosition[2]=-2.0f;//z
+   vertice[0].mPosition[3]=1.0f;//w
+
+    //顶点2
+    vertice[0].mPosition[0]=0.5f;//x
+    vertice[0].mPosition[1]=-0.5f;//y
+    vertice[0].mPosition[2]=-2.0f;//z
+    vertice[0].mPosition[3]=1.0f;//w
+
+    //顶点3
+    vertice[0].mPosition[0]=0.0f;//x
+    vertice[0].mPosition[1]=0.5f;//y
+    vertice[0].mPosition[2]=-2.0f;//z
+    vertice[0].mPosition[3]=1.0f;//w
+
 }
 
 
