@@ -6,26 +6,10 @@
 #include "Utils.h"
 //定义 AAssetManager
 static AAssetManager * aAssetManager= nullptr;
-
-//unsigned char * loadFileContent(const  char *path,int &fileSize){
-//    unsigned char *fileContent= nullptr;
-//    fileSize=0;
-//    //根据文件路径获取文件的Assets队形
-//    AAsset *aAsset=AAssetManager_open(aAssetManager,path,AASSET_MODE_UNKNOWN);
-//    if (aAsset!= nullptr){
-//        //有文件获取文件内容的长度
-//        fileSize=AAsset_getLength(aAsset);
-//        //开辟空间, 空间大小为内容的长度+1，个人习惯用于存放\n
-//        fileContent=new unsigned char [fileSize+1];
-//        //将aAsset中的内容读取到fileContent中 ,读取的长度fileSize
-//        AAsset_read(aAsset,fileContent,fileSize);
-//        //最后一位写0
-//        fileContent[fileSize]=0;
-//        //记得释放资源
-//        AAsset_close(aAsset);
-//    }
-//    return fileContent;
-//}
+//GPU程序
+GLuint program;
+// vertex buffer object ，用于存顶点数据缓冲区对象，顶点数据放置到Gluint上，通过Gluint vbo将顶点数据放置到显卡上去
+GLuint vbo;
 
 extern "C"
 JNIEXPORT void JNICALL
@@ -70,8 +54,6 @@ jobject am // 传入AssetsManager 操作管理 assets目录
     vertice[0].mPosition[2]=-2.0f;//z
     vertice[0].mPosition[3]=1.0f;//w
 
-    // vertex buffer object ，用于存顶点数据缓冲区对象，顶点数据放置到Gluint上，通过Gluint vbo将顶点数据放置到显卡上去
-    GLuint vbo;
     //让显卡将vbo初始化，让显卡在显卡上创建一个对象，将对象的标识写如vbo中，通过vbo中的标识操作显卡  1：告诉显卡需要1个vbo   也可以申请多个vboglGenBuffers(2,vbos)
     glGenBuffers(1,&vbo);
     //设置数据  将vbo设置到GL_ARRAY_BUFFER卡槽上去
@@ -104,6 +86,12 @@ jobject am // 传入AssetsManager 操作管理 assets目录
     delete [] fileContent;
     __android_log_print(ANDROID_LOG_ERROR,LOG_TAG,"vs:%u  fs:%u\n",vsShader,fsShader);
 
+    //当shader只是GPU程序的组成模块，最终是通过gpu程序绘制的
+    program=CreateProgram(vsShader,fsShader);
+    //当程序创建完成后删除对应的Shader
+    glDeleteShader(vsShader);
+    glDeleteShader(fsShader);
+    __android_log_print(ANDROID_LOG_ERROR,LOG_TAG,"Program:%u \n",program);
 }
 
 
@@ -129,7 +117,7 @@ jobject thiz
 ) {
 
     //打印日志  计算每一次调用render和上一次间隔的时间
-    __android_log_print(ANDROID_LOG_ERROR,LOG_TAG,"Render %f",GetFrameTime());
+//    __android_log_print(ANDROID_LOG_ERROR,LOG_TAG,"Render %f",GetFrameTime());
     //擦出某些东西，  擦出（颜色缓存区）GL_COLOR_BUFFER_BIT
     //GL_DEPTH_BUFFER_BIT 深度缓冲区
     //GL_STENCIL_BUFFER_BIT 模板缓冲

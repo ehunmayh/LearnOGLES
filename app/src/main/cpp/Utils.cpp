@@ -89,3 +89,49 @@ GLuint CompileShader(GLenum shader_type,const char * source_code){
      }
     return shader_to_ret;
 }
+
+/**
+ * 创建一个GPU程序
+ * @param vertex_shader
+ * @param fragment_shader
+ * @return
+ */
+GLuint CreateProgram(GLuint vertex_shader,GLuint fragment_shader){
+    //创建program
+    GLuint program_to_return=glCreateProgram();
+    //将shader 关联上program
+    glAttachShader(program_to_return,vertex_shader);
+    glAttachShader(program_to_return,fragment_shader);
+    //在C++中，先编译，在链接
+    glLinkProgram(program_to_return);
+    //当链接完成后解除program相关连的shader
+    glDeleteShader(vertex_shader);
+    glDeleteShader(fragment_shader);
+    //查看编译结果
+    GLint link_result=GL_TRUE;
+    //将链接的结果GL_LINK_STATUS 赋值给 link_result
+    glGetProgramiv(program_to_return,GL_LINK_STATUS,&link_result);
+    if (link_result==GL_FALSE){
+        //链接失败
+        //没有编译成功 复制为0，并将日志输出
+        char szLog[1024]={0};
+        GLsizei logLen=0;
+        glGetProgramInfoLog(program_to_return,1024,&logLen,szLog);
+        __android_log_print(ANDROID_LOG_ERROR,LOG_TAG,"CreateProgran_log: %s\n",szLog);
+        //有问题将Program删除
+        glDeleteProgram(program_to_return);
+        program_to_return=0;
+    }
+    return program_to_return;
+}
+
+
+/**
+ * 一个标准的GPU程序是：先编译，后链接的过程， 这个方法封装了一下上面的这两个方法 CompileShader  CreateProgram
+ * @param vertex_shader_path 传入 vertex_shader源码路径
+ * @param fragment_shader_path fragment_shader源码路径
+ * @return
+ */
+GLuint CreateStandardProgram(const char *vertex_shader_path,const char fragment_shader_path){
+    
+}
