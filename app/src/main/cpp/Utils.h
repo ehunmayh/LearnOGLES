@@ -13,3 +13,11 @@ struct Vertice{
 unsigned char * loadFileContent(AAssetManager  *aAssetManager,const  char *path,int &fileSize);
 
 float GetFrameTime();
+
+/**
+ * 编译shader源码的方法
+ * @param shader_type  shader的类型
+ * @param source_code  编译的源码
+ * @return
+ */
+GLuint CompileShader(GLenum shader_type,const char * source_code);

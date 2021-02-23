@@ -68,3 +68,5 @@
             
       gl_Position=U_ProjectionMatrix*U_ViewMatrix*U_ModeMatrix*position;
       U_ModeMatrix*position（模型矩阵乘以坐标转成--》世界坐标）--》U_ViewMatrix*U_ModeMatrix*position（世界坐标*视口矩阵--》视口坐标）---》U_ProjectionMatrix（通过投影矩阵转到屏幕上）
+
+10.      
