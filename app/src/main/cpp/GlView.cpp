@@ -10,7 +10,10 @@ static AAssetManager * aAssetManager= nullptr;
 GLuint program;
 // vertex buffer object ，用于存顶点数据缓冲区对象，顶点数据放置到Gluint上，通过Gluint vbo将顶点数据放置到显卡上去
 GLuint vbo;
-
+//对应vertex_shader 上插槽的位置 MVP
+GLint modelMatrixLocation,viewMatrixLocation,projectionMatrixLocation;
+//传入shader 属性的position
+GLint attributePosition;
 extern "C"
 JNIEXPORT void JNICALL
 Java_com_myh_learnogles_glview_MayhGLSurfaceViewRenderer_initGlView(JNIEnv
@@ -43,16 +46,16 @@ jobject am // 传入AssetsManager 操作管理 assets目录
    vertice[0].mPosition[3]=1.0f;//w
 
     //顶点2
-    vertice[0].mPosition[0]=0.5f;//x
-    vertice[0].mPosition[1]=-0.5f;//y
-    vertice[0].mPosition[2]=-2.0f;//z
-    vertice[0].mPosition[3]=1.0f;//w
+    vertice[1].mPosition[0]=0.5f;//x
+    vertice[1].mPosition[1]=-0.5f;//y
+    vertice[1].mPosition[2]=-2.0f;//z
+    vertice[1].mPosition[3]=1.0f;//w
 
     //顶点3
-    vertice[0].mPosition[0]=0.0f;//x
-    vertice[0].mPosition[1]=0.5f;//y
-    vertice[0].mPosition[2]=-2.0f;//z
-    vertice[0].mPosition[3]=1.0f;//w
+    vertice[2].mPosition[0]=0.0f;//x
+    vertice[2].mPosition[1]=0.5f;//y
+    vertice[2].mPosition[2]=-2.0f;//z
+    vertice[2].mPosition[3]=1.0f;//w
 
     //让显卡将vbo初始化，让显卡在显卡上创建一个对象，将对象的标识写如vbo中，通过vbo中的标识操作显卡  1：告诉显卡需要1个vbo   也可以申请多个vboglGenBuffers(2,vbos)
     glGenBuffers(1,&vbo);
@@ -73,8 +76,18 @@ jobject am // 传入AssetsManager 操作管理 assets目录
     //将卡槽GL_ARRAY_BUFFER重新指向0号vbo, 0号是一个缺省值默认值， 为什么这么设置指向0号呢，为了防止后面失误操作了vbo产生数据污染， 因为这个已经将vbo重新指向了0号vbo,
     // 即后面我失误调用了glBufferData(GL_ARRAY_BUFFER,sizeof(Vertice)*3,vertice,GL_STATIC_DRAW)，也不会对之前的产生影响
     glBindBuffer(GL_ARRAY_BUFFER,0);
-    //船舰一个GPU程序
+    //创建一个GPU程序
     program=CreateStandardProgram(aAssetManager,"test.vs","test.fs");
+    //获取插槽索引 位置 M V P,  第二个参数是shader中 Uniform变量的名字, 将这些数据从CPU传入GPU
+    //通过获取到这些位置,我们是通过这些位置对顶点进行设置的
+    modelMatrixLocation=glGetUniformLocation(program,"U_ModeMatrix");
+    viewMatrixLocation=glGetUniformLocation(program,"U_ViewMatrix");
+    projectionMatrixLocation=glGetUniformLocation(program,"U_ProjectionMatrix");
+    attributePosition=glGetAttribLocation(program,"position");
+    //即获取shader中Uniform和attribute变量的值， 需要注意的是如果shader中定义的变量没有使用，没有对gl_FragColor和gl_Position造成影响的话，显卡驱动就会把它优化掉，此时获取的值是-1
+    //GLint colorPosition=glGetAttribLocation(program,"color");//这俩个测试变量在shader中没有用到,获取的值为-1
+    //GLint sizePosition=glGetUniformLocation(program,"size");//
+    __android_log_print(ANDROID_LOG_ERROR,LOG_TAG,"%d,%d,%d,%d",attributePosition,modelMatrixLocation,viewMatrixLocation,projectionMatrixLocation);
 }
 
 
