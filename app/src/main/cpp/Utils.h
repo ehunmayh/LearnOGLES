@@ -36,4 +36,4 @@ GLuint CreateProgram(GLuint vertex_shader,GLuint fragment_shader);
  * @param fragment_shader_path fragment_shader源码路径
  * @return
  */
-GLuint CreateStandardProgram(const char *vertex_shader_path,const char fragment_shader_path);
+GLuint CreateStandardProgram(AAssetManager *aAssetManager,const char *vertex_shader_path,const char *fragment_shader_path);

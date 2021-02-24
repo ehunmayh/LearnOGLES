@@ -73,25 +73,8 @@ jobject am // 传入AssetsManager 操作管理 assets目录
     //将卡槽GL_ARRAY_BUFFER重新指向0号vbo, 0号是一个缺省值默认值， 为什么这么设置指向0号呢，为了防止后面失误操作了vbo产生数据污染， 因为这个已经将vbo重新指向了0号vbo,
     // 即后面我失误调用了glBufferData(GL_ARRAY_BUFFER,sizeof(Vertice)*3,vertice,GL_STATIC_DRAW)，也不会对之前的产生影响
     glBindBuffer(GL_ARRAY_BUFFER,0);
-
-    //编译Assets下的Shader
-    int size=0;
-    unsigned char *fileContent=loadFileContent(aAssetManager,"test.vs",size);
-    //编译vertex_shader
-    GLuint vsShader=CompileShader(GL_VERTEX_SHADER, (char *)fileContent);
-    delete [] fileContent;
-    fileContent=loadFileContent(aAssetManager,"test.fs",size);
-    //编译fragment_shader
-    GLuint fsShader=CompileShader(GL_FRAGMENT_SHADER,(char*)fileContent);
-    delete [] fileContent;
-    __android_log_print(ANDROID_LOG_ERROR,LOG_TAG,"vs:%u  fs:%u\n",vsShader,fsShader);
-
-    //当shader只是GPU程序的组成模块，最终是通过gpu程序绘制的
-    program=CreateProgram(vsShader,fsShader);
-    //当程序创建完成后删除对应的Shader
-    glDeleteShader(vsShader);
-    glDeleteShader(fsShader);
-    __android_log_print(ANDROID_LOG_ERROR,LOG_TAG,"Program:%u \n",program);
+    //船舰一个GPU程序
+    program=CreateStandardProgram(aAssetManager,"test.vs","test.fs");
 }
 
 

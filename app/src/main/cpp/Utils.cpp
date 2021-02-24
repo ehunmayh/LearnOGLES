@@ -127,11 +127,29 @@ GLuint CreateProgram(GLuint vertex_shader,GLuint fragment_shader){
 
 
 /**
- * 一个标准的GPU程序是：先编译，后链接的过程， 这个方法封装了一下上面的这两个方法 CompileShader  CreateProgram
+ * 封装创建一个标准的GPU程序的过程：先编译，后链接，的过程， 这个方法封装了一下上面的这两个方法 CompileShader  CreateProgram
  * @param vertex_shader_path 传入 vertex_shader源码路径
  * @param fragment_shader_path fragment_shader源码路径
  * @return
  */
-GLuint CreateStandardProgram(const char *vertex_shader_path,const char fragment_shader_path){
-    
+GLuint CreateStandardProgram(AAssetManager *aAssetManager,const char *vertex_shader_path,const char *fragment_shader_path){
+    //编译Assets下的Shader
+    int size=0;
+    unsigned char *fileContent=loadFileContent(aAssetManager,vertex_shader_path,size);
+    //编译vertex_shader
+    GLuint vsShader=CompileShader(GL_VERTEX_SHADER, (char *)fileContent);
+    delete [] fileContent;
+    fileContent=loadFileContent(aAssetManager,fragment_shader_path,size);
+    //编译fragment_shader
+    GLuint fsShader=CompileShader(GL_FRAGMENT_SHADER,(char*)fileContent);
+    delete [] fileContent;
+    __android_log_print(ANDROID_LOG_ERROR,LOG_TAG,"vs:%u  fs:%u\n",vsShader,fsShader);
+
+    //当shader只是GPU程序的组成模块，最终是通过gpu程序绘制的
+    GLuint program=CreateProgram(vsShader,fsShader);
+    //当程序创建完成后删除对应的Shader
+    glDeleteShader(vsShader);
+    glDeleteShader(fsShader);
+    __android_log_print(ANDROID_LOG_ERROR,LOG_TAG,"Program:%u \n",program);
+    return program;
 }
