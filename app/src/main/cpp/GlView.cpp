@@ -14,6 +14,9 @@ GLuint vbo;
 GLint modelMatrixLocation,viewMatrixLocation,projectionMatrixLocation;
 //传入shader 属性的position
 GLint attributePosition;
+//声明MVP矩阵, 从cpu--->传入到gpu, modelMatrix,viewMatrix不做任何设置,引用用gl的默认行为,都是单位矩阵,
+// 而投影矩阵是我们必须要设置的在onSurfaceChange方法中,projectMatrix
+glm::mat4 modelMatrix,viewMatrix,projectMatrix;
 extern "C"
 JNIEXPORT void JNICALL
 Java_com_myh_learnogles_glview_MayhGLSurfaceViewRenderer_initGlView(JNIEnv
@@ -42,19 +45,19 @@ jobject am // 传入AssetsManager 操作管理 assets目录
    //顶点1
    vertice[0].mPosition[0]=-0.5f;//x
    vertice[0].mPosition[1]=-0.5f;//y
-   vertice[0].mPosition[2]=-2.0f;//z
+   vertice[0].mPosition[2]=-5.0f;//z
    vertice[0].mPosition[3]=1.0f;//w
 
     //顶点2
     vertice[1].mPosition[0]=0.5f;//x
     vertice[1].mPosition[1]=-0.5f;//y
-    vertice[1].mPosition[2]=-2.0f;//z
+    vertice[1].mPosition[2]=-5.0f;//z
     vertice[1].mPosition[3]=1.0f;//w
 
     //顶点3
     vertice[2].mPosition[0]=0.0f;//x
     vertice[2].mPosition[1]=0.5f;//y
-    vertice[2].mPosition[2]=-2.0f;//z
+    vertice[2].mPosition[2]=-5.0f;//z
     vertice[2].mPosition[3]=1.0f;//w
 
     //让显卡将vbo初始化，让显卡在显卡上创建一个对象，将对象的标识写如vbo中，通过vbo中的标识操作显卡  1：告诉显卡需要1个vbo   也可以申请多个vboglGenBuffers(2,vbos)
@@ -103,6 +106,12 @@ jint height
     __android_log_print(ANDROID_LOG_ERROR,LOG_TAG,"onSurfaceChange %dx%d",width,height);
     //ViewPort是gl的另一个状态 ， ViewPort：画布  原点平谬左下角（0，0），，等价Canvas
     glViewport(0,0,width,height);
+    //参数一是一个角度   参数二是固定的opengl的宽高比    第三个:在opengl的坐标中,看下z轴负方向,看到的最近的坐标  第四个是最远的坐标
+    projectMatrix=glm::perspective(45.0f,float(width)/float(height),0.1f,1000.0f);
+    //opengl中默认的viewMatrix  设置这的这个就是默认值,不设置的话也会用这个默认值
+    viewMatrix=glm::lookAt(glm::vec3(0.0f,0.0f,0.0f)//站在哪个位置看
+            ,glm::vec3(0.0f,0.0f,-1.0f)//看向哪里
+            ,glm::vec3(0.0,1.0f,0.0f));//垂直向上方向的向量,y轴的正方向
 }
 
 extern "C"
@@ -119,4 +128,28 @@ jobject thiz
     //GL_STENCIL_BUFFER_BIT 模板缓冲
     //open从GL状态机中获取对应的状态值进行擦出
     glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT|GL_STENCIL_BUFFER_BIT);
+    //通过vbo去设置shader中attribute变量的值  将状态机指向vbo
+    glBindBuffer(GL_ARRAY_BUFFER,vbo);
+    //设置用哪个程序绘制 必须线设置程序,在设置属性
+    glUseProgram(program);
+    //设置MVP矩阵 第一个参数是把矩阵设置到哪个位置  count: 表示设置矩阵的数量 1   ,GAL_FALSE表示矩阵不需要转置    第四个为传入的矩阵
+    glUniformMatrix4fv(modelMatrixLocation,1,GL_FALSE,glm::value_ptr(modelMatrix));
+    glUniformMatrix4fv(viewMatrixLocation,1,GL_FALSE,glm::value_ptr(viewMatrix));
+    glUniformMatrix4fv(projectionMatrixLocation,1,GL_FALSE,glm::value_ptr(projectMatrix));
+    //set attribute属性的值
+    //激活这个卡槽对应的attribute 属性
+    glEnableVertexAttribArray(attributePosition);
+    //设置这个属性的值 ,目的是为了让GPU端能够正确的遍历VBO,把数据取出来一个一个发给Vertex_shader去执行
+    glVertexAttribPointer(attributePosition,//
+            4,//size:一个点有多少个组成部分:x,y,z,w4部分
+            GL_FLOAT,// GL_FLOAT:每个组成部分的类型,
+            GL_FALSE,// normalized:GL_FALSE表示是否需要映射,因为fs中gl_FragColor中颜色的类型是浮点型 所以不需要映射,如果我们写的是0-255RGB的值就需要映射成0-1的浮点数
+            sizeof(Vertice),//stride每个点之间的间隔
+            0);//第一个参数attributePosition这个属性的数据,偏移是多少
+
+    //当设置都完成后进行绘制 绘制三角形  从第几个点开始画   一共三个顶点,  从GL_ARRAY_BUFFER指向的VBO中取出三个点
+    glDrawArrays(GL_TRIANGLES,0,3);
+    //当绘制完成后,设置为0 避免后边的操作对vbo造成干扰
+    glBindBuffer(GL_ARRAY_BUFFER,0);
+    glUseProgram(0);
 }
