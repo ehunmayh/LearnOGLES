@@ -45,7 +45,7 @@ jobject am // 传入AssetsManager 操作管理 assets目录
    //顶点1
    vertice[0].mPosition[0]=-0.5f;//x
    vertice[0].mPosition[1]=-0.5f;//y
-   vertice[0].mPosition[2]=-5.0f;//z
+   vertice[0].mPosition[2]=5.0f;//z  当z轴大于等于0时,就无法绘制出来了,可以理解为=0时和眼睛在一个面上是无法开出效果的, 大于0就是盲区
    vertice[0].mPosition[3]=1.0f;//w
    vertice[0].mColor[0]=1.0f;//r
    vertice[0].mColor[1]=1.0f;//g
@@ -55,7 +55,7 @@ jobject am // 传入AssetsManager 操作管理 assets目录
     //顶点2
     vertice[1].mPosition[0]=0.5f;//x
     vertice[1].mPosition[1]=-0.5f;//y
-    vertice[1].mPosition[2]=-5.0f;//z
+    vertice[1].mPosition[2]=5.0f;//z
     vertice[1].mPosition[3]=1.0f;//w
     vertice[1].mColor[0]=1.0f;//r
     vertice[1].mColor[1]=0.0f;//g
@@ -65,12 +65,17 @@ jobject am // 传入AssetsManager 操作管理 assets目录
     //顶点3
     vertice[2].mPosition[0]=0.0f;//x
     vertice[2].mPosition[1]=0.5f;//y
-    vertice[2].mPosition[2]=-5.0f;//z
+    vertice[2].mPosition[2]=5.0f;//z
     vertice[2].mPosition[3]=1.0f;//w
     vertice[2].mColor[0]=0.0f;//r
     vertice[2].mColor[1]=1.0f;//g
     vertice[2].mColor[2]=1.0f;//b
     vertice[2].mColor[3]=1.0f;//a
+
+    //当z轴大于等于0时,就无法绘制出来了,可通过对矩阵模型的操作在让其显示出来
+    modelMatrix=glm::translate(0.0f,0.0f,-8.0f)//平移
+            *glm::scale(1.0f,1.0f,1.0f)//缩放
+            *glm::rotate(360.0f,0.0f,0.0f,1.0f);//旋转360度, 这个点 表示的z轴旋转, 这些效果都是叠加显示的
 
     //让显卡将vbo初始化，让显卡在显卡上创建一个对象，将对象的标识写如vbo中，通过vbo中的标识操作显卡  1：告诉显卡需要1个vbo   也可以申请多个vboglGenBuffers(2,vbos)
     glGenBuffers(1,&vbo);
