@@ -69,4 +69,27 @@
       gl_Position=U_ProjectionMatrix*U_ViewMatrix*U_ModeMatrix*position;
       U_ModeMatrix*position（模型矩阵乘以坐标转成--》世界坐标）--》U_ViewMatrix*U_ModeMatrix*position（世界坐标*视口矩阵--》视口坐标）---》U_ProjectionMatrix（通过投影矩阵转到屏幕上）
 
-10.      
+10: shader之间的数据传递必须通过varying 变量
+
+    attribute vec4 position;
+    attribute vec4 color;
+    uniform mat4 size;
+    uniform mat4 U_ModeMatrix;
+    uniform mat4 U_ViewMatrix;
+    uniform mat4 U_ProjectionMatrix;
+    varying vec4 V_color;//shader值键数据传递通过 varying变量, shader之前传递的变量需要同名
+    void main(){
+       V-color=color;//额外输出这个变量 ,携带颜色
+       gl_Position=U_ProjectionMatrix*U_ViewMatrix*U_ModeMatrix*position;
+    }     
+    
+    //fragment shader 
+    #ifdef GL_ES
+    precision mediump float; //定义 gl中float的精度 ,如果编译出错No precision specified for (float)
+    #endif
+    varying vec4 V_color;//声明相同变量名的变量去接受这个
+    void main() {
+       gl_FragColor=V_color;
+    }
+    
+    虽然我们指给三个顶点定义了颜色,但是三角形内部其他点的颜色都是光栅画内部插值出来的,各个点颜色和位置都是显卡内部做的, 法线\纹理坐标等插值也是由显卡完成
