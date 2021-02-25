@@ -29,6 +29,7 @@ add_library( # Sets the name of the library.
              Sence.cpp
              GlView.cpp
              Utils.cpp
+             LogUtil.cpp
         )
 
 # Searches for a specified prebuilt library and stores the path as a

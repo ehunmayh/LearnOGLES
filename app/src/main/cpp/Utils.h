@@ -7,6 +7,7 @@
 //opengl es 画三角形： 定义顶点数据的结构体用于存放 ：
 struct Vertice{
     float mPosition[4];//顶点数据的：x轴,y轴,z轴,w（齐次坐标）的
+    float mColor[4];//顶点数据颜色：r,g,b,a
 };
 
 //定义加载文件的方法

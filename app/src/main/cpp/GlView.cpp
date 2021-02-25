@@ -12,8 +12,8 @@ GLuint program;
 GLuint vbo;
 //对应vertex_shader 上插槽的位置 MVP
 GLint modelMatrixLocation,viewMatrixLocation,projectionMatrixLocation;
-//传入shader 属性的position
-GLint attributePosition;
+//传入shader 属性相关的position
+GLint attributePosition,attributeColorPosition;
 //声明MVP矩阵, 从cpu--->传入到gpu, modelMatrix,viewMatrix不做任何设置,引用用gl的默认行为,都是单位矩阵,
 // 而投影矩阵是我们必须要设置的在onSurfaceChange方法中,projectMatrix
 glm::mat4 modelMatrix,viewMatrix,projectMatrix;
@@ -29,7 +29,7 @@ jobject am // 传入AssetsManager 操作管理 assets目录
     //打印日志
     __android_log_print(ANDROID_LOG_ERROR,LOG_TAG,"initGlView");
     //设置颜色：在gl的渲染环境中设置ClearColor状态
-   glClearColor(0.1f,0.1,0.8f,1.0f);
+   glClearColor(0.5f,0.5,0.8f,1.0f);
 
    int fileSize=0;
    //读取Assets下的内容
@@ -47,18 +47,30 @@ jobject am // 传入AssetsManager 操作管理 assets目录
    vertice[0].mPosition[1]=-0.5f;//y
    vertice[0].mPosition[2]=-5.0f;//z
    vertice[0].mPosition[3]=1.0f;//w
+   vertice[0].mColor[0]=1.0f;//r
+   vertice[0].mColor[1]=1.0f;//g
+   vertice[0].mColor[2]=0.0f;//b
+   vertice[0].mColor[3]=1.0f;//a
 
     //顶点2
     vertice[1].mPosition[0]=0.5f;//x
     vertice[1].mPosition[1]=-0.5f;//y
     vertice[1].mPosition[2]=-5.0f;//z
     vertice[1].mPosition[3]=1.0f;//w
+    vertice[1].mColor[0]=1.0f;//r
+    vertice[1].mColor[1]=0.0f;//g
+    vertice[1].mColor[2]=1.0f;//b
+    vertice[1].mColor[3]=1.0f;//a
 
     //顶点3
     vertice[2].mPosition[0]=0.0f;//x
     vertice[2].mPosition[1]=0.5f;//y
     vertice[2].mPosition[2]=-5.0f;//z
     vertice[2].mPosition[3]=1.0f;//w
+    vertice[2].mColor[0]=0.0f;//r
+    vertice[2].mColor[1]=1.0f;//g
+    vertice[2].mColor[2]=1.0f;//b
+    vertice[2].mColor[3]=1.0f;//a
 
     //让显卡将vbo初始化，让显卡在显卡上创建一个对象，将对象的标识写如vbo中，通过vbo中的标识操作显卡  1：告诉显卡需要1个vbo   也可以申请多个vboglGenBuffers(2,vbos)
     glGenBuffers(1,&vbo);
@@ -88,9 +100,9 @@ jobject am // 传入AssetsManager 操作管理 assets目录
     projectionMatrixLocation=glGetUniformLocation(program,"U_ProjectionMatrix");
     attributePosition=glGetAttribLocation(program,"position");
     //即获取shader中Uniform和attribute变量的值， 需要注意的是如果shader中定义的变量没有使用，没有对gl_FragColor和gl_Position造成影响的话，显卡驱动就会把它优化掉，此时获取的值是-1
-    //GLint colorPosition=glGetAttribLocation(program,"color");//这俩个测试变量在shader中没有用到,获取的值为-1
+    attributeColorPosition=glGetAttribLocation(program,"color");//这俩个测试变量在shader中没有用到,获取的值为-1
     //GLint sizePosition=glGetUniformLocation(program,"size");//
-    __android_log_print(ANDROID_LOG_ERROR,LOG_TAG,"%d,%d,%d,%d",attributePosition,modelMatrixLocation,viewMatrixLocation,projectionMatrixLocation);
+    __android_log_print(ANDROID_LOG_ERROR,LOG_TAG,"%d,%d,%d,%d,%d",attributePosition,modelMatrixLocation,viewMatrixLocation,projectionMatrixLocation,attributeColorPosition);
 }
 
 
@@ -141,12 +153,15 @@ jobject thiz
     glEnableVertexAttribArray(attributePosition);
     //设置这个属性的值 ,目的是为了让GPU端能够正确的遍历VBO,把数据取出来一个一个发给Vertex_shader去执行
     glVertexAttribPointer(attributePosition,//
-            4,//size:一个点有多少个组成部分:x,y,z,w4部分
+            4,//size:这个属性(一个点)有多少个组成部分:x,y,z,w4部分
             GL_FLOAT,// GL_FLOAT:每个组成部分的类型,
-            GL_FALSE,// normalized:GL_FALSE表示是否需要映射,因为fs中gl_FragColor中颜色的类型是浮点型 所以不需要映射,如果我们写的是0-255RGB的值就需要映射成0-1的浮点数
-            sizeof(Vertice),//stride每个点之间的间隔
+            GL_FALSE,// normalized:GL_FALSE表示是否需要映射,是将非浮点数映射成第三个参数(浮点数)类型,可以理解为是否要转换成浮点数 因为fs中gl_FragColor中颜色的类型是浮点型 所以不需要映射,如果我们写的是0-255RGB的值就需要映射成0-1的浮点数
+            sizeof(Vertice),//stride每个点之间这个属性之间的间隔
             0);//第一个参数attributePosition这个属性的数据,偏移是多少
-
+     //设置颜色属性
+     glEnableVertexAttribArray(attributeColorPosition);
+     //最后一个是这个属性的数据偏移, 现在一个点 由position(4个float)+color(4个float), 所以数据偏移是4个float的大小
+     glVertexAttribPointer(attributeColorPosition,4,GL_FLOAT,GL_FALSE,sizeof(Vertice),(void *)(sizeof(float)*4));
     //当设置都完成后进行绘制 绘制三角形  从第几个点开始画   一共三个顶点,  从GL_ARRAY_BUFFER指向的VBO中取出三个点
     glDrawArrays(GL_TRIANGLES,0,3);
     //当绘制完成后,设置为0 避免后边的操作对vbo造成干扰
