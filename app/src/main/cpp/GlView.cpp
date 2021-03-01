@@ -43,9 +43,9 @@ jobject am // 传入AssetsManager 操作管理 assets目录
    //定义三角形的三个顶点，这些顶点数据是在CPU内存上， 目标是把这些呈现到--》GPU上
    Vertice vertice[3];
    //顶点1
-   vertice[0].mPosition[0]=-0.5f;//x
-   vertice[0].mPosition[1]=-0.5f;//y
-   vertice[0].mPosition[2]=5.0f;//z  当z轴大于等于0时,就无法绘制出来了,可以理解为=0时和眼睛在一个面上是无法开出效果的, 大于0就是盲区
+   vertice[0].mPosition[0]=-50.0f;//x
+   vertice[0].mPosition[1]=-50.0f;//y
+   vertice[0].mPosition[2]=0.0f;//z  当z轴大于等于0时,就无法绘制出来了,可以理解为=0时和眼睛在一个面上是无法开出效果的, 大于0就是盲区
    vertice[0].mPosition[3]=1.0f;//w
    vertice[0].mColor[0]=1.0f;//r
    vertice[0].mColor[1]=1.0f;//g
@@ -53,9 +53,9 @@ jobject am // 传入AssetsManager 操作管理 assets目录
    vertice[0].mColor[3]=1.0f;//a
 
     //顶点2
-    vertice[1].mPosition[0]=0.5f;//x
-    vertice[1].mPosition[1]=-0.5f;//y
-    vertice[1].mPosition[2]=5.0f;//z
+    vertice[1].mPosition[0]=50.0f;//x
+    vertice[1].mPosition[1]=-50.0f;//y
+    vertice[1].mPosition[2]=0.0f;//z
     vertice[1].mPosition[3]=1.0f;//w
     vertice[1].mColor[0]=1.0f;//r
     vertice[1].mColor[1]=0.0f;//g
@@ -64,18 +64,60 @@ jobject am // 传入AssetsManager 操作管理 assets目录
 
     //顶点3
     vertice[2].mPosition[0]=0.0f;//x
-    vertice[2].mPosition[1]=0.5f;//y
-    vertice[2].mPosition[2]=5.0f;//z
+    vertice[2].mPosition[1]=50.0f;//y
+    vertice[2].mPosition[2]=0.0f;//z
     vertice[2].mPosition[3]=1.0f;//w
     vertice[2].mColor[0]=0.0f;//r
     vertice[2].mColor[1]=1.0f;//g
     vertice[2].mColor[2]=1.0f;//b
     vertice[2].mColor[3]=1.0f;//a
 
+    //定义矩形的顶点，这些顶点数据是在CPU内存上， 目标是把这些呈现到--》GPU上, 顺序是 左右  左右
+    Vertice vertice2[4];
+    //顶点1
+    vertice2[0].mPosition[0]=-100.0f;//x
+    vertice2[0].mPosition[1]=100.0f;//y
+    vertice2[0].mPosition[2]=0.0f;//z  当z轴大于等于0时,就无法绘制出来了,可以理解为=0时和眼睛在一个面上是无法开出效果的, 大于0就是盲区
+    vertice2[0].mPosition[3]=1.0f;//w
+    vertice2[0].mColor[0]=1.0f;//r
+    vertice2[0].mColor[1]=1.0f;//g
+    vertice2[0].mColor[2]=0.0f;//b
+    vertice2[0].mColor[3]=1.0f;//a
+
+    //顶点2
+    vertice2[1].mPosition[0]=100.0f;//x
+    vertice2[1].mPosition[1]=100.0f;//y
+    vertice2[1].mPosition[2]=0.0f;//z
+    vertice2[1].mPosition[3]=1.0f;//w
+    vertice2[1].mColor[0]=1.0f;//r
+    vertice2[1].mColor[1]=0.0f;//g
+    vertice2[1].mColor[2]=1.0f;//b
+    vertice2[1].mColor[3]=1.0f;//a
+
+    //顶点3
+    vertice2[2].mPosition[0]=-100.0f;//x
+    vertice2[2].mPosition[1]=200.0f;//y
+    vertice2[2].mPosition[2]=0.0f;//z
+    vertice2[2].mPosition[3]=1.0f;//w
+    vertice2[2].mColor[0]=0.0f;//r
+    vertice2[2].mColor[1]=1.0f;//g
+    vertice2[2].mColor[2]=1.0f;//b
+    vertice2[2].mColor[3]=1.0f;//a
+
+    //顶点4
+    vertice2[3].mPosition[0]=100.0f;//x
+    vertice2[3].mPosition[1]=200.0f;//y
+    vertice2[3].mPosition[2]=0.0f;//z
+    vertice2[3].mPosition[3]=1.0f;//w
+    vertice2[3].mColor[0]=0.0f;//r
+    vertice2[3].mColor[1]=1.0f;//g
+    vertice2[3].mColor[2]=1.0f;//b
+    vertice2[3].mColor[3]=1.0f;//a
+
     //当z轴大于等于0时,就无法绘制出来了,可通过对矩阵模型的操作在让其显示出来
-    modelMatrix=glm::translate(0.0f,0.0f,-8.0f)//平移
-            *glm::scale(1.0f,1.0f,1.0f)//缩放
-            *glm::rotate(360.0f,0.0f,0.0f,1.0f);//旋转360度, 这个点 表示的z轴旋转, 这些效果都是叠加显示的
+    modelMatrix=glm::translate(0.0f,0.0f,-8.0f);//平移
+//            *glm::scale(1.0f,1.0f,1.0f)//缩放
+//            *glm::rotate(360.0f,0.0f,0.0f,1.0f);//旋转360度, 这个点 表示的z轴旋转, 这些效果都是叠加显示的
 
     //让显卡将vbo初始化，让显卡在显卡上创建一个对象，将对象的标识写如vbo中，通过vbo中的标识操作显卡  1：告诉显卡需要1个vbo   也可以申请多个vboglGenBuffers(2,vbos)
     glGenBuffers(1,&vbo);
@@ -123,8 +165,14 @@ jint height
     __android_log_print(ANDROID_LOG_ERROR,LOG_TAG,"onSurfaceChange %dx%d",width,height);
     //ViewPort是gl的另一个状态 ， ViewPort：画布  原点平谬左下角（0，0），，等价Canvas
     glViewport(0,0,width,height);
-    //参数一是一个角度   参数二是固定的opengl的宽高比    第三个:在opengl的坐标中,看下z轴负方向,看到的最近的坐标  第四个是最远的坐标
-    projectMatrix=glm::perspective(45.0f,float(width)/float(height),0.1f,1000.0f);
+    //透视投影
+    //参数一是一个角度   参数二是固定的opengl的宽高比    第三个:在opengl的坐标中,看下z轴负方向,看到的最近的坐标  第四个是最远的坐标  透视投影:在3D视野中,近大远小
+//    projectMatrix=glm::perspective(45.0f,float(width)/float(height),0.1f,1000.0f);
+    //正交投影
+    float half_width=width/2.0f;
+    float half_height=height/2.0f;
+    //左边界 ,右边界  下边界 上边界  最近可以看到0.1f  最远100.0f
+    projectMatrix=glm::ortho(-half_width,half_width,-half_height,half_height,0.1f,100.0f);//正交投影必须这么设置,屏幕中心看作二位坐标的原点
     //opengl中默认的viewMatrix  设置这的这个就是默认值,不设置的话也会用这个默认值
     viewMatrix=glm::lookAt(glm::vec3(0.0f,0.0f,0.0f)//站在哪个位置看
             ,glm::vec3(0.0f,0.0f,-1.0f)//看向哪里

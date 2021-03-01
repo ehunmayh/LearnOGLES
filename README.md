@@ -93,3 +93,16 @@
     }
     
     虽然我们指给三个顶点定义了颜色,但是三角形内部其他点的颜色都是光栅画内部插值出来的,各个点颜色和位置都是显卡内部做的, 法线\纹理坐标等插值也是由显卡完成
+    
+ 11: 透视投影和正交投影
+ 
+     透视投影:在3D视野中,近大远小, 投影矩阵默认就是一个透视投影
+     glm::perspective(45.0f,float(width)/float(height),0.1f,1000.0f);
+     
+     正交投影:没有近大远小的效果,能够按照屏幕坐标绘制东西, 
+     glm::ortho(-half_width,half_width,-half_height,half_height,0.1f,100.0f);
+     
+     当设置都完成后进行绘制 绘制三角形  从第几个点开始画   一共三个顶点,  从GL_ARRAY_BUFFER指向的VBO中取出三个点
+     glDrawArrays(GL_TRIANGLES,0,3);
+     //绘制矩形 顶点定义必须按照左右 左右的顺序定义   左下角 右下角  左上角 右上角
+     glDrawArrays(GL_TRIANGLE_STRIP,0,4);
