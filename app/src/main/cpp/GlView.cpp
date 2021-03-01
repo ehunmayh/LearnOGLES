@@ -17,6 +17,9 @@ GLint attributePosition,attributeColorPosition;
 //声明MVP矩阵, 从cpu--->传入到gpu, modelMatrix,viewMatrix不做任何设置,引用用gl的默认行为,都是单位矩阵,
 // 而投影矩阵是我们必须要设置的在onSurfaceChange方法中,projectMatrix
 glm::mat4 modelMatrix,viewMatrix,projectMatrix;
+
+//定义矩形的顶点，这些顶点数据是在CPU内存上， 目标是把这些呈现到--》GPU上, 顺序是 左右  左右
+Vertice vertice2[4];
 extern "C"
 JNIEXPORT void JNICALL
 Java_com_myh_learnogles_glview_MayhGLSurfaceViewRenderer_initGlView(JNIEnv
@@ -72,11 +75,9 @@ jobject am // 传入AssetsManager 操作管理 assets目录
     vertice[2].mColor[2]=1.0f;//b
     vertice[2].mColor[3]=1.0f;//a
 
-    //定义矩形的顶点，这些顶点数据是在CPU内存上， 目标是把这些呈现到--》GPU上, 顺序是 左右  左右
-    Vertice vertice2[4];
     //顶点1
-    vertice2[0].mPosition[0]=-100.0f;//x
-    vertice2[0].mPosition[1]=100.0f;//y
+    vertice2[0].mPosition[0]=-640.0f;//x
+    vertice2[0].mPosition[1]=-918.0f;//y
     vertice2[0].mPosition[2]=0.0f;//z  当z轴大于等于0时,就无法绘制出来了,可以理解为=0时和眼睛在一个面上是无法开出效果的, 大于0就是盲区
     vertice2[0].mPosition[3]=1.0f;//w
     vertice2[0].mColor[0]=1.0f;//r
@@ -85,8 +86,8 @@ jobject am // 传入AssetsManager 操作管理 assets目录
     vertice2[0].mColor[3]=1.0f;//a
 
     //顶点2
-    vertice2[1].mPosition[0]=100.0f;//x
-    vertice2[1].mPosition[1]=100.0f;//y
+    vertice2[1].mPosition[0]=640.0f;//x
+    vertice2[1].mPosition[1]=-918.0f;//y
     vertice2[1].mPosition[2]=0.0f;//z
     vertice2[1].mPosition[3]=1.0f;//w
     vertice2[1].mColor[0]=1.0f;//r
@@ -95,8 +96,8 @@ jobject am // 传入AssetsManager 操作管理 assets目录
     vertice2[1].mColor[3]=1.0f;//a
 
     //顶点3
-    vertice2[2].mPosition[0]=-100.0f;//x
-    vertice2[2].mPosition[1]=200.0f;//y
+    vertice2[2].mPosition[0]=-640.0f;//x
+    vertice2[2].mPosition[1]=918.0f;//y
     vertice2[2].mPosition[2]=0.0f;//z
     vertice2[2].mPosition[3]=1.0f;//w
     vertice2[2].mColor[0]=0.0f;//r
@@ -105,8 +106,8 @@ jobject am // 传入AssetsManager 操作管理 assets目录
     vertice2[2].mColor[3]=1.0f;//a
 
     //顶点4
-    vertice2[3].mPosition[0]=100.0f;//x
-    vertice2[3].mPosition[1]=200.0f;//y
+    vertice2[3].mPosition[0]=640.0f;//x
+    vertice2[3].mPosition[1]=918.0f;//y
     vertice2[3].mPosition[2]=0.0f;//z
     vertice2[3].mPosition[3]=1.0f;//w
     vertice2[3].mColor[0]=0.0f;//r
@@ -133,7 +134,7 @@ jobject am // 传入AssetsManager 操作管理 assets目录
      * 后期在动态设置数据
      * glBufferSubData(GL_ARRAY_BUFFER,0,sizeof(Vertice)*3,vertice);//让后在动态的设置数据cpu--》gpu
      */
-    glBufferData(GL_ARRAY_BUFFER,sizeof(Vertice)*3,vertice,GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER,sizeof(Vertice)*4,vertice2,GL_STATIC_DRAW);
 
     //将卡槽GL_ARRAY_BUFFER重新指向0号vbo, 0号是一个缺省值默认值， 为什么这么设置指向0号呢，为了防止后面失误操作了vbo产生数据污染， 因为这个已经将vbo重新指向了0号vbo,
     // 即后面我失误调用了glBufferData(GL_ARRAY_BUFFER,sizeof(Vertice)*3,vertice,GL_STATIC_DRAW)，也不会对之前的产生影响
@@ -216,7 +217,9 @@ jobject thiz
      //最后一个是这个属性的数据偏移, 现在一个点 由position(4个float)+color(4个float), 所以数据偏移是4个float的大小
      glVertexAttribPointer(attributeColorPosition,4,GL_FLOAT,GL_FALSE,sizeof(Vertice),(void *)(sizeof(float)*4));
     //当设置都完成后进行绘制 绘制三角形  从第几个点开始画   一共三个顶点,  从GL_ARRAY_BUFFER指向的VBO中取出三个点
-    glDrawArrays(GL_TRIANGLES,0,3);
+//    glDrawArrays(GL_TRIANGLES,0,3);
+//绘制矩形 顶点定义必须按照左右 左右的顺序定义   左下角 右下角  左上角 右上角
+    glDrawArrays(GL_TRIANGLE_STRIP,0,4);
     //当绘制完成后,设置为0 避免后边的操作对vbo造成干扰
     glBindBuffer(GL_ARRAY_BUFFER,0);
     glUseProgram(0);
