@@ -16,7 +16,7 @@ GLint modelMatrixLocation,viewMatrixLocation,projectionMatrixLocation;
 GLint attributePosition,attributeColorPosition;
 //声明MVP矩阵, 从cpu--->传入到gpu, modelMatrix,viewMatrix不做任何设置,引用用gl的默认行为,都是单位矩阵,
 // 而投影矩阵是我们必须要设置的在onSurfaceChange方法中,projectMatrix
-glm::mat4 modelMatrix,viewMatrix,projectMatrix;
+glm::mat4 modelMatrix,viewMatrix,projectMatrix,modelMatrix2;
 
 //定义矩形的顶点，这些顶点数据是在CPU内存上， 目标是把这些呈现到--》GPU上, 顺序是 左右  左右
 Vertice vertice2[4];
@@ -76,8 +76,8 @@ jobject am // 传入AssetsManager 操作管理 assets目录
     vertice[2].mColor[3]=1.0f;//a
 
     //顶点1
-    vertice2[0].mPosition[0]=-640.0f;//x
-    vertice2[0].mPosition[1]=-918.0f;//y
+    vertice2[0].mPosition[0]=-50.0f;//x
+    vertice2[0].mPosition[1]=-50.0f;//y
     vertice2[0].mPosition[2]=0.0f;//z  当z轴大于等于0时,就无法绘制出来了,可以理解为=0时和眼睛在一个面上是无法开出效果的, 大于0就是盲区
     vertice2[0].mPosition[3]=1.0f;//w
     vertice2[0].mColor[0]=1.0f;//r
@@ -86,8 +86,8 @@ jobject am // 传入AssetsManager 操作管理 assets目录
     vertice2[0].mColor[3]=1.0f;//a
 
     //顶点2
-    vertice2[1].mPosition[0]=640.0f;//x
-    vertice2[1].mPosition[1]=-918.0f;//y
+    vertice2[1].mPosition[0]=50.0f;//x
+    vertice2[1].mPosition[1]=-50.0f;//y
     vertice2[1].mPosition[2]=0.0f;//z
     vertice2[1].mPosition[3]=1.0f;//w
     vertice2[1].mColor[0]=1.0f;//r
@@ -96,8 +96,8 @@ jobject am // 传入AssetsManager 操作管理 assets目录
     vertice2[1].mColor[3]=1.0f;//a
 
     //顶点3
-    vertice2[2].mPosition[0]=-640.0f;//x
-    vertice2[2].mPosition[1]=918.0f;//y
+    vertice2[2].mPosition[0]=-50.0f;//x
+    vertice2[2].mPosition[1]=50.0f;//y
     vertice2[2].mPosition[2]=0.0f;//z
     vertice2[2].mPosition[3]=1.0f;//w
     vertice2[2].mColor[0]=0.0f;//r
@@ -106,8 +106,8 @@ jobject am // 传入AssetsManager 操作管理 assets目录
     vertice2[2].mColor[3]=1.0f;//a
 
     //顶点4
-    vertice2[3].mPosition[0]=640.0f;//x
-    vertice2[3].mPosition[1]=918.0f;//y
+    vertice2[3].mPosition[0]=50.0f;//x
+    vertice2[3].mPosition[1]=50.0f;//y
     vertice2[3].mPosition[2]=0.0f;//z
     vertice2[3].mPosition[3]=1.0f;//w
     vertice2[3].mColor[0]=0.0f;//r
@@ -116,7 +116,8 @@ jobject am // 传入AssetsManager 操作管理 assets目录
     vertice2[3].mColor[3]=1.0f;//a
 
     //当z轴大于等于0时,就无法绘制出来了,可通过对矩阵模型的操作在让其显示出来
-    modelMatrix=glm::translate(0.0f,0.0f,-8.0f);//平移
+    modelMatrix=glm::translate(0.0f,0.0f,-7.0f);//平移
+    modelMatrix2=glm::translate(50.0f,0.0f,-8.0f);
 //            *glm::scale(1.0f,1.0f,1.0f)//缩放
 //            *glm::rotate(360.0f,0.0f,0.0f,1.0f);//旋转360度, 这个点 表示的z轴旋转, 这些效果都是叠加显示的
 
@@ -216,9 +217,16 @@ jobject thiz
      glEnableVertexAttribArray(attributeColorPosition);
      //最后一个是这个属性的数据偏移, 现在一个点 由position(4个float)+color(4个float), 所以数据偏移是4个float的大小
      glVertexAttribPointer(attributeColorPosition,4,GL_FLOAT,GL_FALSE,sizeof(Vertice),(void *)(sizeof(float)*4));
+
+     //启用深度测试深度缓冲区，管理物体的远近关系，如果不启用这个，就是后面绘制的覆盖前面绘制的，
+     glEnable(GL_DEPTH_TEST);
+
     //当设置都完成后进行绘制 绘制三角形  从第几个点开始画   一共三个顶点,  从GL_ARRAY_BUFFER指向的VBO中取出三个点
 //    glDrawArrays(GL_TRIANGLES,0,3);
 //绘制矩形 顶点定义必须按照左右 左右的顺序定义   左下角 右下角  左上角 右上角
+    glDrawArrays(GL_TRIANGLE_STRIP,0,4);
+    //绘制第二个四刷新模型矩阵， opengl是个状态机，一次设置后可以多次绘制，默认绘制出来的第二个覆盖第一个正方形，可以通过glEnable(GL_DEPTH_TEST);配合两个模型矩阵的z坐标近大远小的效果
+    glUniformMatrix4fv(modelMatrixLocation,1,GL_FALSE,glm::value_ptr(modelMatrix2));
     glDrawArrays(GL_TRIANGLE_STRIP,0,4);
     //当绘制完成后,设置为0 避免后边的操作对vbo造成干扰
     glBindBuffer(GL_ARRAY_BUFFER,0);

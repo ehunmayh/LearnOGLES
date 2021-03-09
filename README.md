@@ -106,3 +106,14 @@
      glDrawArrays(GL_TRIANGLES,0,3);
      //绘制矩形 顶点定义必须按照左右 左右的顺序定义   左下角 右下角  左上角 右上角
      glDrawArrays(GL_TRIANGLE_STRIP,0,4);
+
+12: 如何使用深度缓冲区控制物体的前后顺序（2D和3D均适用）
+
+      //启用深度测试深度缓冲区，管理物体的远近关系，如果不启用这个，就是后面绘制的覆盖前面绘制的，
+        glEnable(GL_DEPTH_TEST);
+
+       glDrawArrays(GL_TRIANGLE_STRIP,0,4);
+       //绘制第二个四刷新模型矩阵， opengl是个状态机，一次设置后可以多次绘制，默认绘制出来的第二个覆盖第一个正方形，
+       //可以通过glEnable(GL_DEPTH_TEST);配合两个模型矩阵的z坐标近大远小的效果
+       glUniformMatrix4fv(modelMatrixLocation,1,GL_FALSE,glm::value_ptr(modelMatrix2));
+
